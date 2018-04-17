@@ -1,0 +1,129 @@
+﻿@model ETicaret.Models.i.IndexModel
+@{
+    ViewBag.Title = "Ana Sayfa";
+    List<ETicaret.DB.Categories> categories = new List<ETicaret.DB.Categories>();
+    if (Model.Category != null)
+    {
+        categories.Add(Model.Category);
+        var parentcat = Model.Category.Categories2;
+        while (parentcat != null)
+        {
+            categories.Add(parentcat);
+            parentcat = parentcat.Categories2;
+        }
+    }
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li>
+                <a href="@Url.Action("index","i",new {id=0 })">Ana Sayfa</a>
+            </li>
+            @for (int i = categories.Count - 1; i >= 0; i--)
+            {
+                if (i == 0)
+                {
+                    <li class="active">@categories[i].Name</li>
+                }
+                else
+                {
+                    <li><a href="@Url.Action("index","i",new {id=categories[i].Id })">@categories[i].Name</a></li>
+                }
+            }
+            @*<li class="active">Bilgisayar</li>*@
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var item in Model.Products)
+    {
+        @Html.Partial("ProductItem", item);
+    }
+
+</div>
+
+
+<div class="modal fade" id="productinfo" tabindex="-1" role="dialog" aria-labelledby="productinfo-label">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="productinfo-label">Ürün Bilgisi</h4>
+            </div>
+            <div class="modal-body">
+                <p id="modalBodyP"></p>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                    <a href="~/i/AddBasket/Id" id="modelBasketHref" class="btn btn-success">
+                        <span class="glyphicon glyphicon-shopping-cart"></span>&nbsp;Sepete At
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function GetProductInfo(Id) {
+        $("#productinfo").modal("show");
+        $.ajax({
+            url: "/i/GetProductDes/" + Id,
+            Method: "GET",
+            async: true,
+            success: function (data) {
+                $("#modalBodyP").text(data);
+                var newHref = $("#modelBasketHref").attr("href");
+                newHref = newHref.replace("/Id", "/" + Id);
+                $("#modelBasketHref").attr("href", newHref);
+            },
+            error: function (err) {
+                Console.log("Hata", err);
+                $("#productinfo").modal("hide");
+            }
+        });
+    }
+</script>
+
+
+@*<div class="modal fade" id="productinfo" tabindex="-1" role="dialog" aria-labelledby="productinfo-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="productinfo-label">Ürün Bilgisi</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 col-md-offset-3 mb-4 mt-4">
+                            <!-- Tek resim göstermek için -->
+                            <img src="http://placehold.it/350x230" class="img-thumbnail" alt="">
+                            <!-- Carousel için -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mt-4 text-justify">
+                            <h3>Product Name</h3>
+                            <hr>
+                            <p id="modalBodyp">
+
+                            </p>
+                            <p class="text-right mt-4 mb-4">
+                                <b>Price : 10.00 $</b>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                    <a href="cart.html" class="btn btn-success">
+                        <span class="glyphicon glyphicon-shopping-cart"></span>&nbsp;Sepete At
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>*@

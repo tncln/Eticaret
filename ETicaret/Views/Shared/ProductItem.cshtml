@@ -1,0 +1,36 @@
+﻿@model ETicaret.DB.Products
+@{
+    if (string.IsNullOrEmpty(Model.ImageName))
+    {
+        Model.ImageName = "images/300x150.png";
+    }
+}
+<div class="col-md-3 col-sm-4 col-xs-12" >
+    <div class="thumbnail" id="ProductBody">
+        <a href="~/i/Product/@Model.Id">
+            <img class="img img-responsive" src="~/@Model.ImageName" style="max-height:150px;min-height:150px;">
+        </a>
+        <div class="caption">
+            <h3 class="text-center ProductNameStyle"><a href="~/i/Product/@Model.Id">@Model.Name</a></h3>
+            @if (string.IsNullOrEmpty(Model.Description) == false && Model.Description.Length > 100)
+            {
+                <p style="opacity:0.8;">
+                    @(Model.Description.Substring(0, 97) + "...")
+                </p>
+            }
+            else
+            {
+                <p style="opacity:0.8;">@Model.Description</p>
+            }
+            @*<p class="text-justify">@Model.Description</p>*@
+            <p>
+                <a href="~/i/AddBasket/@Model.Id" class="btn btn-success">
+                    <span class="glyphicon glyphicon-shopping-cart"></span>&nbsp;Sepete Ekle
+                </a>
+                <button onclick="GetProductInfo(@Model.Id)" class="btn btn-primary pull-right">
+                    <span class="glyphicon glyphicon-info-sign"></span>&nbsp;Bilgi
+                </button>
+            </p>
+        </div>
+    </div>
+</div>
